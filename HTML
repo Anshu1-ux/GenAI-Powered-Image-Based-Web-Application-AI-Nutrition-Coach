@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Nutrition Coach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>AI Nutrition Coach</h1>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form class="form" action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+      <div class="input-group">
+        <label for="food_image">Upload a photo of your meal</label>
+        <input type="file" id="food_image" name="food_image" accept="image/png, image/jpeg, image/webp" required>
+      </div>
+
+      <div class="input-group">
+        <label for="notes">Any notes? (portion size, dietary goals, etc.)</label>
+        <input type="text" id="notes" name="notes" placeholder="e.g. This is my lunch, trying to eat low-carb">
+      </div>
+
+      <button type="submit" class="btn-primary">Analyze My Meal</button>
+    </form>
+
+    <div id="loading" class="loading" style="display:none;">
+      Analyzing your meal, please wait...
+    </div>
+
+    {% if image_preview %}
+      <img class="uploaded-image-preview" src="{{ image_preview }}" alt="Uploaded meal">
+    {% endif %}
+
+    {% if response_html %}
+      <div class="result">
+        <h2>Your Nutrition Breakdown</h2>
+        <div class="response-content">
+          {{ response_html | safe }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function showLoading() {
+      document.getElementById('loading').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
